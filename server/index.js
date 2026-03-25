@@ -1,34 +1,14 @@
-// 1. SAFETY WRAPPERS
-function safeRequire(moduleName) {
-  try {
-    return require(moduleName);
-  } catch (e) {
-    console.error(`CRITICAL ERROR: Module '${moduleName}' is not installed.`);
-    return null;
-  }
-}
-
-const dotenv = safeRequire('dotenv');
-if (dotenv) dotenv.config();
-
-const express = safeRequire('express');
-const cors = safeRequire('cors');
-
-if (!express || !cors) {
-  console.log("Stopping execution: Essential modules (express/cors) are missing.");
-  process.exit(1);
-}
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+require('dotenv').config();
 
 const app = express();
 
-// 2. MIDDLEWARE & CORS
-app.use(cors({
-  origin: process.env.FRONTEND_URL || "*", 
-  credentials: true,
-}));
+app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
 
-// 3. HARDWARE DATABASE
+// --- HARDWARE DATA ---
 const computers = [
   { id: 1, name: "Quantum X-1 Platinum", status: "Flagship", cpu: "i9-15900K", gpu: "RTX 5090 Ti", ram: "128GB DDR5", storage: "4TB Gen5", cooling: "360mm Liquid", psu: "1200W Titan", benchmark: 100, price: "4,999" },
   { id: 2, name: "Nebula Storm Pro", status: "High-End", cpu: "Ryzen 9 9950X", gpu: "RX 8900 XTX", ram: "64GB DDR5", storage: "2TB Gen5", cooling: "Air Stealth", psu: "1000W Gold", benchmark: 92, price: "3,299" },
@@ -42,10 +22,18 @@ const computers = [
   { id: 10, name: "Omega Sentinel", status: "Standard", cpu: "Ryzen 5 9600X", gpu: "RX 8800 XT", ram: "32GB DDR5", storage: "1TB Gen4", cooling: "Standard Air", psu: "750W Gold", benchmark: 72, price: "1,799" }
 ];
 
-// 4. ROUTES
+// API Route
 app.get('/api/computers', (req, res) => res.json(computers));
-app.get('/', (req, res) => res.send("<h1>FutureTech API Online</h1>"));
 
-// 5. PORT
+// --- THE MONOLITH BRIDGE ---
+// This serves the static React files from the client/dist folder
+const buildPath = path.join(__dirname, '../client/dist');
+app.use(express.static(buildPath));
+
+// Catch-all: Send index.html for any non-API route (handles React Router refreshes)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(buildPath, 'index.html'));
+});
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Hardware API active on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Monolith flying on port ${PORT}`));
