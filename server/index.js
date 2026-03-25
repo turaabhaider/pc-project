@@ -1,13 +1,19 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const authRoutes = require('./routes/auth');
 
 const app = express();
-app.use(cors());
+
+// --- PRODUCTION CORS ---
+// Ensure this matches the URL Railway gives your React frontend
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || "http://localhost:5173", 
+  credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
-// THE MASTER DATA (10 COMPUTERS)
+// THE HARDWARE DATA
 const computers = [
   { id: 1, name: "Quantum X-1 Platinum", status: "Flagship", cpu: "i9-15900K", gpu: "RTX 5090 Ti", ram: "128GB DDR5", storage: "4TB Gen5", cooling: "360mm Liquid", psu: "1200W Titan", benchmark: 100, price: "4,999" },
   { id: 2, name: "Nebula Storm Pro", status: "High-End", cpu: "Ryzen 9 9950X", gpu: "RX 8900 XTX", ram: "64GB DDR5", storage: "2TB Gen5", cooling: "Air Stealth", psu: "1000W Gold", benchmark: 92, price: "3,299" },
@@ -22,14 +28,16 @@ const computers = [
 ];
 
 // Routes
-app.use('/api/auth', authRoutes);
-
-// DIRECT API ROUTE (This replaces the need for a separate routes/computers file for now)
 app.get('/api/computers', (req, res) => {
-    res.json(computers);
+  res.json(computers);
 });
 
-app.get('/', (req, res) => res.send("Server is alive!"));
+app.get('/', (req, res) => {
+  res.send("<h1>FutureTech API Status: <span style='color: #00f2ff;'>ONLINE</span></h1>");
+});
 
-const PORT = 5000;
-app.listen(PORT, () => console.log(`🚀 Server flying on port ${PORT}`));
+// --- DYNAMIC PORT FOR RAILWAY ---
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`🚀 Hardware Supremacy Server active on port ${PORT}`);
+});
