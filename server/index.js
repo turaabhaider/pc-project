@@ -1,11 +1,19 @@
-require('dotenv').config();
+// 1. SAFETY WRAPPER FOR DOTENV
+// On Railway, variables are injected via the environment, so the 'dotenv' module 
+// is technically optional in production. This prevents the crash you saw.
+try {
+  require('dotenv').config();
+} catch (e) {
+  console.log("INFO: Dotenv module not found, proceeding with system environment variables.");
+}
+
 const express = require('express');
 const cors = require('cors');
 
 const app = express();
 
-// --- PRODUCTION CORS ---
-// Ensure this matches the URL Railway gives your React frontend
+// 2. PRODUCTION CORS
+// This ensures your frontend can actually talk to this backend
 const corsOptions = {
   origin: process.env.FRONTEND_URL || "http://localhost:5173", 
   credentials: true,
@@ -13,7 +21,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// THE HARDWARE DATA
+// 3. HARDWARE DATABASE
 const computers = [
   { id: 1, name: "Quantum X-1 Platinum", status: "Flagship", cpu: "i9-15900K", gpu: "RTX 5090 Ti", ram: "128GB DDR5", storage: "4TB Gen5", cooling: "360mm Liquid", psu: "1200W Titan", benchmark: 100, price: "4,999" },
   { id: 2, name: "Nebula Storm Pro", status: "High-End", cpu: "Ryzen 9 9950X", gpu: "RX 8900 XTX", ram: "64GB DDR5", storage: "2TB Gen5", cooling: "Air Stealth", psu: "1000W Gold", benchmark: 92, price: "3,299" },
@@ -27,17 +35,17 @@ const computers = [
   { id: 10, name: "Omega Sentinel", status: "Standard", cpu: "Ryzen 5 9600X", gpu: "RX 8800 XT", ram: "32GB DDR5", storage: "1TB Gen4", cooling: "Standard Air", psu: "750W Gold", benchmark: 72, price: "1,799" }
 ];
 
-// Routes
+// 4. ROUTES
 app.get('/api/computers', (req, res) => {
   res.json(computers);
 });
 
 app.get('/', (req, res) => {
-  res.send("<h1>FutureTech API Status: <span style='color: #00f2ff;'>ONLINE</span></h1>");
+  res.send("<h1>FutureTech API: <span style='color: #00f2ff;'>ONLINE</span></h1>");
 });
 
-// --- DYNAMIC PORT FOR RAILWAY ---
+// 5. DYNAMIC PORT BINDING
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Hardware Supremacy Server active on port ${PORT}`);
+  console.log(`🚀 Server active on port ${PORT}`);
 });
