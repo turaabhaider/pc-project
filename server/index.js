@@ -1,24 +1,31 @@
-// 1. SAFETY WRAPPER FOR DOTENV
-// On Railway, variables are injected via the environment, so the 'dotenv' module 
-// is technically optional in production. This prevents the crash you saw.
-try {
-  require('dotenv').config();
-} catch (e) {
-  console.log("INFO: Dotenv module not found, proceeding with system environment variables.");
+// 1. SAFETY WRAPPERS
+function safeRequire(moduleName) {
+  try {
+    return require(moduleName);
+  } catch (e) {
+    console.error(`CRITICAL ERROR: Module '${moduleName}' is not installed.`);
+    return null;
+  }
 }
 
-const express = require('express');
-const cors = require('cors');
+const dotenv = safeRequire('dotenv');
+if (dotenv) dotenv.config();
+
+const express = safeRequire('express');
+const cors = safeRequire('cors');
+
+if (!express || !cors) {
+  console.log("Stopping execution: Essential modules (express/cors) are missing.");
+  process.exit(1);
+}
 
 const app = express();
 
-// 2. PRODUCTION CORS
-// This ensures your frontend can actually talk to this backend
-const corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:5173", 
+// 2. MIDDLEWARE & CORS
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "*", 
   credentials: true,
-};
-app.use(cors(corsOptions));
+}));
 app.use(express.json());
 
 // 3. HARDWARE DATABASE
@@ -36,16 +43,9 @@ const computers = [
 ];
 
 // 4. ROUTES
-app.get('/api/computers', (req, res) => {
-  res.json(computers);
-});
+app.get('/api/computers', (req, res) => res.json(computers));
+app.get('/', (req, res) => res.send("<h1>FutureTech API Online</h1>"));
 
-app.get('/', (req, res) => {
-  res.send("<h1>FutureTech API: <span style='color: #00f2ff;'>ONLINE</span></h1>");
-});
-
-// 5. DYNAMIC PORT BINDING
+// 5. PORT
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server active on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`🚀 Hardware API active on port ${PORT}`));
