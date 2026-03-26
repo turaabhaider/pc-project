@@ -14,7 +14,12 @@ const users = [];
 const computers = [
   { id: 1, name: "Quantum X-1 Platinum", status: "Flagship", cpu: "i9-15900K", gpu: "RTX 5090 Ti", ram: "128GB DDR5", storage: "4TB Gen5", cooling: "Liquid", psu: "1200W", price: "4,999", benchmark: 98 },
   { id: 2, name: "Nebula Storm Pro", status: "High-End", cpu: "Ryzen 9 9950X", gpu: "RX 8900 XTX", ram: "64GB DDR5", storage: "2TB Gen5", cooling: "Air High-Flow", psu: "850W", price: "3,299", benchmark: 85 },
-  { id: 3, name: "Titan V8 Overlord", status: "Extreme", cpu: "Threadripper 7980X", gpu: "Dual RTX 5090", ram: "256GB ECC", storage: "16TB RAID 0", cooling: "Industrial Liquid", psu: "1600W Titanium", price: "12,499", benchmark: 100 }
+  { id: 3, name: "Titan V8 Overlord", status: "Extreme", cpu: "Threadripper 7980X", gpu: "Dual RTX 5090", ram: "256GB ECC", storage: "16TB RAID 0", cooling: "Industrial Liquid", psu: "1600W Titanium", price: "12,499", benchmark: 100 },
+  { id: 4, name: "Aero Stealth Ghost", status: "Silent", cpu: "i7-15700K", gpu: "RTX 5070 Super", ram: "32GB DDR5", storage: "2TB NVMe", cooling: "Passive Air", psu: "750W Platinum", price: "2,199", benchmark: 72 },
+  { id: 5, name: "Vanguard Elite", status: "Pro-Work", cpu: "Ryzen 9 9900X", gpu: "RTX 5080", ram: "96GB DDR5", storage: "4TB Gen5", cooling: "AIO 360mm", psu: "1000W", price: "3,850", benchmark: 89 },
+  { id: 6, name: "Cyber Nova Mini", status: "ITX-SFF", cpu: "i5-15600K", gpu: "RTX 5060 Ti", ram: "32GB DDR5", storage: "1TB NVMe", cooling: "Low Profile", psu: "650W SFX", price: "1,499", benchmark: 65 },
+  { id: 7, name: "Apex Predator", status: "Tournament", cpu: "i9-14900KS", gpu: "RTX 4090", ram: "64GB DDR5", storage: "2TB NVMe", cooling: "Custom Loop", psu: "1200W", price: "4,200", benchmark: 94 },
+  { id: 8, name: "Zenith Creator 10", status: "Artist", cpu: "Ryzen 7 9700X", gpu: "RTX 5070", ram: "64GB DDR5", storage: "8TB NVMe", cooling: "Liquid", psu: "850W", price: "2,999", benchmark: 78 }
 ];
 
 // --- AUTH: REGISTER ---
