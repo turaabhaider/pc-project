@@ -22,7 +22,8 @@ app.post('/api/auth/register', async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ message: "Missing fields" });
-    if (users.find(u => u.email === email)) return res.status(400).json({ message: "User exists" });
+    const userExists = users.find(u => u.email === email);
+    if (userExists) return res.status(400).json({ message: "User exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
     users.push({ email, password: hashedPassword });
@@ -56,8 +57,8 @@ app.get('/api/computers', (req, res) => res.json(computers));
 const buildPath = path.join(__dirname, '../client/dist');
 app.use(express.static(buildPath));
 
-// FIX: Standard wildcard for React Router
-app.get('*', (req, res) => {
+// FIX: Change '*' to '(.*)' to fix the Railway PathError
+app.get('(.*)', (req, res) => {
   res.sendFile(path.join(buildPath, 'index.html'));
 });
 
