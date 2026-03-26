@@ -7,7 +7,9 @@ const Home = () => {
   useEffect(() => {
     const getPCs = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/computers');
+        // FIX: Removed 'http://localhost:5000'. 
+        // Using a relative path allows Railway to find the data.
+        const response = await axios.get('/api/computers');
         setComputers(response.data);
       } catch (error) {
         console.error("API Error:", error);
@@ -23,7 +25,6 @@ const Home = () => {
 
   return (
     <div className="app-wrapper">
-      {/* --- REFINED NAVBAR --- */}
       <nav className="navbar">
         <div className="nav-container">
           <div className="logo-section">
@@ -68,12 +69,12 @@ const Home = () => {
                   <span>{pc.benchmark}%</span>
                 </div>
                 <div className="meter-bar">
-                  <div className="meter-fill" style={{ width: `${Math.min(pc.benchmark, 100)}%` }}></div>
+                  <div className="meter-fill" style={{ width: `${Math.min(pc.benchmark || 0, 100)}%` }}></div>
                 </div>
               </div>
 
               <div className="card-footer">
-                <div className="price-tag">{pc.price}</div>
+                <div className="price-tag">${pc.price}</div>
                 <button className="details-btn">DETAILS</button>
               </div>
             </div>
