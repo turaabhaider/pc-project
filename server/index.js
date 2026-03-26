@@ -12,12 +12,12 @@ app.use(express.json());
 // --- IN-MEMORY DATA ---
 const users = []; 
 const computers = [
-  { id: 1, name: "Quantum X-1 Platinum", status: "Flagship", cpu: "i9-15900K", gpu: "RTX 5090 Ti", ram: "128GB DDR5", storage: "4TB Gen5", price: "4,999", benchmark: 98 },
-  { id: 2, name: "Nebula Storm Pro", status: "High-End", cpu: "Ryzen 9 9950X", gpu: "RX 8900 XTX", ram: "64GB DDR5", storage: "2TB Gen5", price: "3,299", benchmark: 85 },
-  { id: 3, name: "Titan V8 Overlord", status: "Extreme", cpu: "Threadripper 7980X", gpu: "Dual RTX 5090", ram: "256GB ECC", storage: "16TB RAID 0", price: "12,499", benchmark: 100 }
+  { id: 1, name: "Quantum X-1 Platinum", status: "Flagship", cpu: "i9-15900K", gpu: "RTX 5090 Ti", ram: "128GB DDR5", storage: "4TB Gen5", cooling: "Liquid", psu: "1200W", price: "4,999", benchmark: 98 },
+  { id: 2, name: "Nebula Storm Pro", status: "High-End", cpu: "Ryzen 9 9950X", gpu: "RX 8900 XTX", ram: "64GB DDR5", storage: "2TB Gen5", cooling: "Air High-Flow", psu: "850W", price: "3,299", benchmark: 85 },
+  { id: 3, name: "Titan V8 Overlord", status: "Extreme", cpu: "Threadripper 7980X", gpu: "Dual RTX 5090", ram: "256GB ECC", storage: "16TB RAID 0", cooling: "Industrial Liquid", psu: "1600W Titanium", price: "12,499", benchmark: 100 }
 ];
 
-// AUTH: REGISTER
+// --- AUTH: REGISTER ---
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -32,7 +32,7 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
-// AUTH: LOGIN
+// --- AUTH: LOGIN ---
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -49,16 +49,20 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-// Hardware Route
+// --- HARDWARE API ---
 app.get('/api/computers', (req, res) => res.json(computers));
 
 // --- MONOLITH SERVING ---
 const buildPath = path.join(__dirname, '../client/dist');
 app.use(express.static(buildPath));
 
-// NEW FIX FOR RAILWAY CRASH:
-// Using ':splat*' tells Express to catch all routes and give them a name
-app.get('/:splat*', (req, res) => {
+// BULLETPROOF FIX FOR THE CRASH:
+// We use a middleware function instead of a string route like '*' or '(.*)'.
+// This prevents path-to-regexp from ever running and crashing the deployment.
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return next(); // Don't interfere with API calls
+  }
   res.sendFile(path.join(buildPath, 'index.html'));
 });
 
